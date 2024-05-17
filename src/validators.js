@@ -6,13 +6,17 @@ import {
   TAG_LARGE,
   TAG_MEDIUM,
   CURRENT_DATE,
-  HEAD_IMAGES_ITEMS
+  HEAD_IMAGES_ITEMS,
 } from "./constants.js";
 import { formatedDate } from "./functions.js";
 import { ICONS } from "./icons.js";
 
 export function isPageValid(currentPage) {
   return Object.keys(HEAD_IMAGES_ITEMS).includes(currentPage);
+}
+
+export function isArrayContainsOnlyString(array) {
+  return array.every((item) => typeof item === "string");
 }
 
 export function isIconTypeValid(name) {
