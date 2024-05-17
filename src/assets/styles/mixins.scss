@@ -1,0 +1,132 @@
+// Определение миксинов
+@mixin flexbox($direction: row, $justify: flex-start, $align: stretch) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+@mixin reset-styles {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  a {
+    text-decoration: none;
+    cursor: pointer;
+  }
+  img,
+  picture {
+    max-width: 100%;
+    display: block;
+  }
+}
+
+@mixin html-tag-styles {
+  font-size: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: 145px;
+  @media (max-width: 1200px) {
+    font-size: 82.5%;
+    scroll-padding-top: 220px;
+  }
+
+  @media (max-width: 767px) {
+    font-size: 80%;
+    scroll-padding-top: 125px;
+  }
+  @media (max-width: 620px) {
+    font-size: 70%;
+  }
+  @media (max-width: 440px) {
+    font-size: 60%;
+  }
+}
+
+@mixin container-styles {
+  width: 1200px;
+  margin: 0 auto;
+
+  @media (max-width: 1200px) {
+    width: 1020px;
+  }
+  @media (max-width: 1024px) {
+    width: 765px;
+  }
+  @media (max-width: 769px) {
+    width: 600px;
+  }
+  @media (max-width: 620px) {
+    width: 420px;
+  }
+  @media (max-width: 440px) {
+    width: 300px;
+  }
+}
+
+@mixin top-styles {
+  @include flexbox(column);
+  gap: $default-blocks-padding;
+  @media (max-width: 620px) {
+    gap: $default-blocks-padding-mobile;
+  }
+}
+
+//текст
+@mixin text-styles(
+  $color,
+  $font-family,
+  $font-size,
+  $line-height,
+  $letter-spacing
+) {
+  color: $color;
+  font-family: $font-family;
+  font-size: $font-size;
+  line-height: $line-height;
+  letter-spacing: $letter-spacing;
+}
+
+@mixin default-text-styles {
+  @include text-styles(
+    $color-text-secondary,
+    $font-family-default,
+    $font-size-text-medium,
+    155%,
+    0.22px
+  );
+}
+
+@mixin header__link-styles {
+  @include text-styles(
+    $color-text-default,
+    $font-family-default,
+    1.25rem,
+    125%,
+    0.36px
+  );
+  text-align: center;
+  padding: $text-block-padding;
+  @media (max-width: 620px) {
+    font-size: $font-size-heading-xlarge;
+    padding-bottom: 39px;
+  }
+}
+
+@mixin footer__link-styles {
+  @include text-styles(
+    $color-text-secondary,
+    $font-family-default,
+    $font-size-text-medium,
+    300%,
+    0.22px
+  );
+  transition: transform 0.3s;
+  &:hover {
+    transform: scale(1.05);
+  }
+  &_small {
+    line-height: 150%;
+  }
+}

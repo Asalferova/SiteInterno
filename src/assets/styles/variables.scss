@@ -1,0 +1,38 @@
+$text-block-padding: 20px;
+$default-blocks-padding: 96px;
+$default-blocks-padding-mobile: 56px;
+
+// Цвета
+$color-text-default: #292f36;
+$color-text-secondary: #4d5053;
+$color-border-light: #e7e7e7;
+$color-background-light: #fff;
+$color-text-highlight: #cda274;
+$color-background-highlight: #f4f0ec;
+
+// Шрифты
+$font-family-default: Jost;
+$font-family-heading: "DM Serif Display";
+
+// Размеры шрифтов
+$font-size-text-small: 1rem;
+$font-size-button-small: 1.1rem;
+$font-size-text-medium: 1.3rem;
+$font-size-heading-large: 1.56rem;
+$font-size-heading-xlarge: 2.1rem;
+$font-size-heading-xxlarge: 2.5rem;
+$font-size-heading-xxxlarge: 3.1rem;
+$font-size-heading-xxxxlarge: 4rem;
+$font-size-heading-xxxxxlarge: 5.3rem;
+
+// Размеры радиуса границы
+$border-radius-circle: 50%;
+$border-radius-small: 10px;
+$border-radius-medium: 37px;
+$border-radius-large: 45px;
+$border-radius-xlarge: 50px;
+$border-radius-xxlarge: 80px;
+
+
+// тени
+$default-shadow: 0px 10px 20px 0px rgba(192, 192, 192, 0.35);

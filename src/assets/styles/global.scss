@@ -1,0 +1,64 @@
+@import "/src/assets/styles/mixins.scss";
+@import "/src/assets/styles/variables.scss";
+
+@font-face {
+  font-family: "Jost";
+  src: url("/src/assets/fonts/Jost-VariableFont_wght.ttf") format("truetype");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "DM Serif Display";
+  src: url("/src/assets/fonts/DM_Serif_Display/DMSerifDisplay-Regular.ttf")
+    format("truetype");
+  font-weight: 400;
+}
+
+@include reset-styles;
+html, body {
+  height: 100%;
+  font-family: $font-family-default;
+
+}
+html {
+  @include html-tag-styles;
+  scroll-behavior: smooth;
+}
+body {
+  overflow-x: hidden;
+}
+
+li {
+  list-style: none;
+}
+#app {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column
+}
+.main {
+  flex: 1 1 auto;
+}
+.container {
+  @include container-styles;
+}
+.top {
+  @include top-styles;
+  flex: 1 1 auto;
+}
+.main-content {
+  @include top-styles;  
+}
+
+:disabled {
+  opacity: 0.4;
+  filter: alpha(opacity=40);
+  cursor: not-allowed;
+  background-color: #dddddd;
+  color: #666;
+  box-shadow: none;
+  text-shadow: none;
+  border-color: #ccc;
+  border-style: solid;
+  border-width: 1px;
+}
