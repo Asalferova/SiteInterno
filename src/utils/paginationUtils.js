@@ -1,6 +1,7 @@
 import { computed } from "vue";
 import { updateQuery, getQueryParameter } from "./routerUtils.js";
 import { QUERY_PARAMS } from "../constants.js";
+import { ref } from "vue";
 
 export function getButtonRange(currentButton, totalButtons) {
   if (totalButtons <= 5) {
@@ -45,4 +46,19 @@ export function usePagination(router, currentPage, totalPages) {
   };
 
   return { paginatedButtons, prevPage, nextPage, goToPage };
+}
+
+export function useInfinitePagination(articlesStore, initialLimit = 1) {
+  let limit = ref(initialLimit);
+
+  const handleVisibilityChange = (isVisible) => {
+    if (isVisible && !articlesStore.allDataLoaded) {
+      limit.value += 3;
+    }
+  };
+
+  return {
+    limit,
+    handleVisibilityChange,
+  };
 }
