@@ -6,6 +6,7 @@ import { URL_ARTICLES as articlesUrl, QUERY_PARAMS } from "../constants";
 export const useArticlesStore = defineStore("articlesStore", () => {
   const data = ref([]);
   const paginationInfo = ref({});
+  const lastItem = ref({});
   const loader = ref(false);
   const error = ref(null);
   let allDataLoaded = ref(false);
@@ -32,6 +33,19 @@ export const useArticlesStore = defineStore("articlesStore", () => {
       loader.value = false;
     }
   };
+  const getLastItem = async () => {
+    loader.value = true;
+    try {
+      const { data: responseData } = await axios.get(
+        `${articlesUrl}?sortBy=-id&page=1&limit=1`
+      );
+      lastItem.value = responseData.items[0];
+    } catch (err) {
+      error.value = err;
+    } finally {
+      loader.value = false;
+    }
+  };
 
   return {
     //значения состояния
@@ -40,8 +54,10 @@ export const useArticlesStore = defineStore("articlesStore", () => {
     allDataLoaded,
     //функции
     getDataByParams,
+    getLastItem,
     //объекты состояния
     data,
     paginationInfo,
+    lastItem,
   };
 });

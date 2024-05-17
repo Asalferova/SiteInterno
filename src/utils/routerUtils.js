@@ -6,3 +6,11 @@ export function navigate(router, route, params) {
 
   router.push(route);
 }
+
+export function getQueryParameter(router, parameterName) {
+  return router.currentRoute.value.query[parameterName];
+}
+
+export function updateQuery(router, query) {
+  router.push({ query: { ...router.currentRoute.query, ...query } });
+}
