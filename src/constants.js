@@ -21,6 +21,26 @@ export const QUERY_PARAMS = {
   ID: "id",
 };
 
+export const HEAD_IMAGES_ITEMS = {
+  [PAGE_BLOG]: {
+    jpg: "./img/headImg.jpg",
+    webp: "./img/headImg.webp",
+  },
+
+  [PAGE_PRODUCTS]: {
+    jpg: "./img/head-projects.jpg",
+    webp: "./img/head-projects.webp",
+  },
+  [PAGE_BLOG_DETAILS]: {
+    jpg: "./img/head-blogDetails.jpg",
+    webp: "./img/head-blogDetails.webp",
+  },
+  [PAGE_PRODUCT_FULL]: {
+    jpg: "./img/head-productFull.jpg",
+    webp: "./img/head-productFull.webp",
+  },
+};
+
 export const BUTTON_CIRCLE_SMALL = "button-circle_small";
 export const BUTTON_CIRCLE_BIG = "button-circle_big";
 export const BUTTON_CIRCLE_PAGINATION = "button-circle_pagination";
