@@ -1,11 +1,4 @@
 // Определение миксинов
-@mixin flexbox($direction: row, $justify: flex-start, $align: stretch) {
-  display: flex;
-  flex-direction: $direction;
-  justify-content: $justify;
-  align-items: $align;
-}
-
 @mixin reset-styles {
   * {
     box-sizing: border-box;
@@ -21,6 +14,28 @@
     max-width: 100%;
     display: block;
   }
+}
+
+@mixin flexbox($direction: row, $justify: flex-start, $align: stretch) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+@mixin position-absolute(
+  $top: auto,
+  $left: auto,
+  $right: auto,
+  $bottom: auto,
+  $transform: none
+) {
+  position: absolute;
+  top: $top;
+  left: $left;
+  right: $right;
+  bottom: $bottom;
+  transform: $transform;
 }
 
 @mixin html-tag-styles {
@@ -74,6 +89,16 @@
 }
 
 //текст
+@mixin title-styles {
+  @include text-styles(
+    $color-text-default,
+    $font-family-heading,
+    $font-size-heading-xxxlarge,
+    125%,
+    1px
+  );
+}
+
 @mixin text-styles(
   $color,
   $font-family,
@@ -94,6 +119,16 @@
     $font-family-default,
     $font-size-text-medium,
     155%,
+    0.22px
+  );
+}
+
+@mixin default-text-ui-styles {
+  @include text-styles(
+    $color-text-secondary,
+    $font-family-default,
+    $font-size-text-small,
+    150%,
     0.22px
   );
 }
@@ -129,4 +164,50 @@
   &_small {
     line-height: 150%;
   }
+}
+
+@mixin main-content-headings-styles {
+  &__flex {
+    @include flexbox(column, center, center);
+    flex-wrap: wrap;
+  }
+  &__content {
+    max-width: 61.4%;
+    text-align: center;
+  }
+  &__title {
+    @include title-styles;
+    text-align: center;
+    padding-bottom: 12px;
+  }
+  &__text {
+    @include default-text-styles;
+    text-align: center;
+    padding-bottom: $default-blocks-padding;
+  }
+  @media (max-width: 769px) {
+    &__content {
+      max-width: 81.4%;
+      text-align: center;
+    }
+  }
+  @media (max-width: 620px) {
+    &__content {
+      max-width: 91.4%;
+    }
+    &__text {
+      padding-bottom: $default-blocks-padding-mobile;
+    }
+  }
+  @media (max-width: 440px) {
+    &__content {
+      max-width: 98.4%;
+    }
+  }
+}
+
+@mixin article-item {
+  border: 1px solid $color-border-light;
+  padding: 21px;
+  border-radius: 62px;
 }
