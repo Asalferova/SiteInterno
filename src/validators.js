@@ -91,3 +91,23 @@ export function isProductValid(product, fields) {
 export function isProductsValid(products, fields) {
   return products.every((product) => isProductValid(product, fields));
 }
+
+export const validateContactForm = (name, email, phone, subject, refs) => {
+  if (!name.trim()) {
+    refs.nameRef.value.focus();
+    return false;
+  }
+  if (!email.includes("@")) {
+    refs.emailRef.value.focus();
+    return false;
+  }
+  if (!phone.match(/^[0-9]+$/)) {
+    refs.phoneRef.value.focus();
+    return false;
+  }
+  if (!subject.trim()) {
+    refs.subjectRef.value.focus();
+    return false;
+  }
+  return true;
+};
