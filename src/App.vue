@@ -5,6 +5,7 @@ import { useArticlesStore } from "./stores/articlesStore";
 import { PAGE_NOT_FOUND } from "./constants.js";
 import TheHeader from "./components/TheHeader";
 import TheFooter from "./components/TheFooter";
+import TheForm from "./components/TheForm";
 import TheLoader from "./components/TheLoader";
 
 const route = useRoute();
@@ -16,6 +17,7 @@ const productsStore = useProductsStore();
   <TheHeader />
   <main class="main">
     <router-view />
+    <TheForm v-if="route.path !== PAGE_NOT_FOUND" />
   </main>
   <The-Loader
     v-show="articlesStore.loader || productsStore.loader"
