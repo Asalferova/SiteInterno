@@ -15,4 +15,26 @@ export const NAV_ITEMS = {
   [PAGE_PRODUCTS]: "Products",
 };
 
+export const QUERY_PARAMS = {
+  PAGE: "page",
+  TAG: "tag[]",
+  ID: "id",
+};
+
+export const BUTTON_CIRCLE_SMALL = "button-circle_small";
+export const BUTTON_CIRCLE_BIG = "button-circle_big";
+export const BUTTON_CIRCLE_PAGINATION = "button-circle_pagination";
+
+export const BUTTON_TYPES = [
+  BUTTON_CIRCLE_SMALL,
+  BUTTON_CIRCLE_BIG,
+  BUTTON_CIRCLE_PAGINATION,
+];
+
+export const TAG_SMALL = "tag-btn_small";
+export const TAG_LARGE = "tag-btn_large";
+export const TAG_MEDIUM = "tag-btn_medium";
+
+export const TAG_TYPES = [TAG_SMALL, TAG_LARGE, TAG_MEDIUM];
+
 export const CURRENT_DATE = new Date();
