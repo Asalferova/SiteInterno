@@ -7,6 +7,7 @@ export const useArticlesStore = defineStore("articlesStore", () => {
   const data = ref([]);
   const paginationInfo = ref({});
   const lastItem = ref({});
+  const uniqueTags = ref([]);
   const loader = ref(false);
   const error = ref(null);
   let allDataLoaded = ref(false);
@@ -47,6 +48,20 @@ export const useArticlesStore = defineStore("articlesStore", () => {
     }
   };
 
+  const getUniqueTags = async () => {
+    loader.value = true;
+    try {
+      const { data: responseData } = await axios.get(
+        `${articlesUrl}?_select=tag`
+      );
+      uniqueTags.value = [...new Set(responseData.map((item) => item["tag"]))];
+    } catch (err) {
+      error.value = err;
+    } finally {
+      loader.value = false;
+    }
+  };
+
   return {
     //значения состояния
     loader,
@@ -55,9 +70,11 @@ export const useArticlesStore = defineStore("articlesStore", () => {
     //функции
     getDataByParams,
     getLastItem,
+    getUniqueTags,
     //объекты состояния
     data,
     paginationInfo,
     lastItem,
+    uniqueTags,
   };
 });
