@@ -57,4 +57,7 @@ export const TAG_MEDIUM = "tag-btn_medium";
 
 export const TAG_TYPES = [TAG_SMALL, TAG_LARGE, TAG_MEDIUM];
 
+export const TAG_LIST_MEDIUM = "tags__medium";
+export const TAG_LIST_LARGE = "tags";
+
 export const CURRENT_DATE = new Date();

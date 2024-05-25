@@ -1,43 +1,43 @@
 <script setup>
-import { watch, ref, onMounted } from "vue";
+import { watch, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
 import { useProductsStore } from "../stores/productsStore";
-import { PAGE_PRODUCTS, QUERY_PARAMS } from "../constants.js";
-import { getQueryParameter } from "../utils/routerUtils.js";
+import { PAGE_PRODUCTS, QUERY_PARAMS, TAG_LIST_MEDIUM } from "../constants.js";
 import { scrollToQueryChange } from "../utils/scrollUtils.js";
+import { getQueryParameter } from "/src/utils/routerUtils.js";
 import TheHeadBackground from "../components/TheHeadBackground";
 import ProductFlexMozaic from "../components/ProductFlexMozaic";
-import TagListMedium from "../components/TagListMedium";
+import TagList from "../components/TagList";
 import ThePagination from "../components/ThePagination";
 import TheErrorMesage from "../components/TheErrorMesage";
 
-const productsStore = useProductsStore();
 const router = useRouter();
-const selectedTags = ref([]);
-let page = ref(1);
+const productsStore = useProductsStore();
+const { error, uniqueTags, data, loader, paginationInfo } =
+  storeToRefs(productsStore);
 const elementRef = ref(null);
-
-onMounted(async () => {
-  await productsStore.getUniqueTags();
+const params = reactive({
+  page: 1,
+  [QUERY_PARAMS.TAG]: getQueryParameter(router, QUERY_PARAMS.TAG) || [],
+  limit: 8,
 });
 
+function updateCurrentPage(value) {
+  params.page = value;
+}
+function updateSelectedTags(value) {
+  params[QUERY_PARAMS.TAG] = value;
+}
+
+productsStore.getUniqueTags();
 watch(
-  [
-    () => parseInt(getQueryParameter(router, QUERY_PARAMS.PAGE)) || 1,
-    () => getQueryParameter(router, QUERY_PARAMS.TAG),
-  ],
-  async ([currentPage, tagParam]) => {
-    page.value = currentPage;
-    selectedTags.value = tagParam ? tagParam : [];
-    await productsStore.getDataByParams({
-      page: page.value,
-      [QUERY_PARAMS.TAG]: selectedTags.value,
-      limit: 8,
-    });
+  () => params,
+  async () => {
+    await productsStore.getDataByParams(params);
   },
   { immediate: true, deep: true }
 );
-
 scrollToQueryChange(router, elementRef);
 </script>
 <template>
@@ -45,25 +45,22 @@ scrollToQueryChange(router, elementRef);
     <the-head-background :current-page="PAGE_PRODUCTS"></the-head-background>
     <div class="main-content" ref="elementRef">
       <div class="container">
-        <the-error-mesage v-show="productsStore.error">
-          {{ productsStore.error }}</the-error-mesage
-        >
-        <div class="products-flex" v-show="!productsStore.error">
-          <tag-list-medium
-            v-if="productsStore.uniqueTags.length"
-            :tags="productsStore.uniqueTags"
-            :selectedTags="selectedTags"
-          ></tag-list-medium>
-          <the-error-mesage v-show="productsStore.data.length === 0"
-            >Not found :(</the-error-mesage
-          >
+        <the-error-mesage v-if="error"> {{ error }}</the-error-mesage>
+        <div class="products-flex" v-if="!error">
+          <tag-list
+            v-if="uniqueTags.length"
+            :type="TAG_LIST_MEDIUM"
+            :tags="uniqueTags"
+            @select="updateSelectedTags"
+          ></tag-list>
           <product-flex-mozaic
-            v-if="productsStore.data.length"
-            :products="productsStore.data"
+            v-if="data.length"
+            :products="data"
           ></product-flex-mozaic>
           <the-pagination
-            v-if="!productsStore.loader"
-            :totalPages="productsStore.paginationInfo"
+            v-if="!loader"
+            :totalPages="paginationInfo.total_pages"
+            @update:currentPage="updateCurrentPage"
           ></the-pagination>
         </div>
       </div>

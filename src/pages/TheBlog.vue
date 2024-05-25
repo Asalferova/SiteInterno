@@ -1,9 +1,9 @@
 <script setup>
-import { watch, ref, onMounted } from "vue";
+import { watch, ref, reactive } from "vue";
 import { useRouter } from "vue-router";
-import { PAGE_BLOG, QUERY_PARAMS } from "../constants.js";
+import { PAGE_BLOG } from "../constants.js";
+import { storeToRefs } from "pinia";
 import { useArticlesStore } from "../stores/articlesStore";
-import { getQueryParameter } from "../utils/routerUtils.js";
 import { scrollToQueryChange } from "../utils/scrollUtils.js";
 import TheHeadBackground from "../components/TheHeadBackground";
 import ArticleMediumItem from "../components/ArticleMediumItem";
@@ -12,23 +12,24 @@ import ArticleItem from "../components/ArticleItem";
 import ThePagination from "../components/ThePagination";
 import TheErrorMesage from "../components/TheErrorMesage";
 
-const articlesStore = useArticlesStore();
 const router = useRouter();
-let page = ref(1);
+const articlesStore = useArticlesStore();
+const { error, lastItem, data, loader, paginationInfo } =
+  storeToRefs(articlesStore);
+const params = reactive({
+  page: 1,
+  limit: 6,
+});
 const elementRef = ref(null);
 
-onMounted(async () => {
-  await articlesStore.getLastItem();
-});
-
+function updateCurrentPage(value) {
+  params.page = value;
+}
+articlesStore.getLastItem();
 watch(
-  () => parseInt(getQueryParameter(router, QUERY_PARAMS.PAGE)) || 1,
-  async (currentPage) => {
-    page.value = currentPage;
-    await articlesStore.getDataByParams({
-      page: page.value,
-      limit: 6,
-    });
+  () => params,
+  async () => {
+    await articlesStore.getDataByParams(params);
   },
   { immediate: true, deep: true }
 );
@@ -39,46 +40,37 @@ scrollToQueryChange(router, elementRef);
 <template>
   <div class="top">
     <the-head-background :current-page="PAGE_BLOG"></the-head-background>
-    <the-error-mesage v-show="articlesStore.error">
-      {{ articlesStore.error }}</the-error-mesage
-    >
-    <div class="main-content" v-show="!articlesStore.error">
-      <section class="articles-and-news">
+    <the-error-mesage v-if="error"> {{ error }}</the-error-mesage>
+    <div class="main-content" v-if="!error">
+      <section class="articles-and-news" v-if="lastItem">
         <div class="container">
           <div class="articles-and-news__content">
             <h2 class="articles-and-news__title_latest">Latest Post</h2>
           </div>
           <article-medium-item
-            v-if="Object.keys(articlesStore.lastItem).length"
             class="article-latest__desctop"
-            :article="articlesStore.lastItem"
+            :article="lastItem"
           ></article-medium-item>
           <div class="container-for-article">
             <article-item
-              v-if="Object.keys(articlesStore.lastItem).length"
               class="article-latest__mobile"
-              :article="articlesStore.lastItem"
+              :article="lastItem"
             ></article-item>
           </div>
         </div>
       </section>
 
-      <section class="articles-and-news" ref="elementRef">
+      <section v-if="data.length" class="articles-and-news" ref="elementRef">
         <div class="container">
           <div class="articles-and-news__content">
             <h2 class="articles-and-news__title_latest">Articles &amp; News</h2>
           </div>
           <div class="articles-and-news__flex">
-            <the-error-mesage v-show="articlesStore.data.length === 0"
-              >Not found :(</the-error-mesage
-            >
-            <article-list
-              v-if="articlesStore.data.length"
-              :articles="articlesStore.data"
-            />
+            <article-list :articles="data" />
             <the-pagination
-              v-if="!articlesStore.loader"
-              :totalPages="articlesStore.paginationInfo"
+              v-if="!loader"
+              :totalPages="paginationInfo.total_pages"
+              @update:currentPage="updateCurrentPage"
             ></the-pagination>
           </div>
         </div>

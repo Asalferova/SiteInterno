@@ -8,46 +8,39 @@ import {
   PAGE_NOT_FOUND,
   NAV_ITEMS,
 } from "../constants";
-import TheHome from "../pages/TheHome.vue";
-import TheBlog from "../pages/TheBlog.vue";
-import TheProducts from "../pages/TheProducts.vue";
-import TheBlogDetails from "../pages/TheBlogDetails.vue";
-import TheNotFound from "../pages/TheNotFound.vue";
-import TheProductFull from "../pages/TheProductFull.vue";
 const routes = [
   {
     path: PAGE_HOME,
     name: NAV_ITEMS[PAGE_HOME],
-    component: TheHome,
+    component: () => import("../pages/TheHome.vue"),
   },
   {
     path: PAGE_BLOG,
     name: NAV_ITEMS[PAGE_BLOG],
-    component: TheBlog,
+    component: () => import("../pages/TheBlog.vue"),
   },
   {
     path: PAGE_PRODUCTS,
     name: NAV_ITEMS[PAGE_PRODUCTS],
-    component: TheProducts,
+    component: () => import("../pages/TheProducts.vue"),
   },
   {
     path: PAGE_BLOG_DETAILS,
     name: NAV_ITEMS[PAGE_BLOG_DETAILS],
-    component: TheBlogDetails,
+    component: () => import("../pages/TheBlogDetails.vue"),
   },
   {
     path: PAGE_PRODUCT_FULL,
     name: NAV_ITEMS[PAGE_PRODUCT_FULL],
-    component: TheProductFull,
-  },
-  {
-    path: PAGE_NOT_FOUND,
-    name: NAV_ITEMS[PAGE_NOT_FOUND],
-    component: TheNotFound,
+    component: () => import("../pages/TheProductFull.vue"),
   },
   {
     path: "/:catchAll(.*)",
-    component: TheNotFound,
+    redirect: PAGE_NOT_FOUND,
+  },
+  {
+    path: PAGE_NOT_FOUND,
+    component: () => import("../pages/TheNotFound.vue"),
   },
 ];
 

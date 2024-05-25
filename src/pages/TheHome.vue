@@ -1,5 +1,4 @@
 <script setup>
-import { onMounted } from "vue";
 import { useProductsStore } from "../stores/productsStore";
 import { useArticlesStore } from "../stores/articlesStore";
 import { PAGE_BLOG, PAGE_PRODUCTS, QUERY_PARAMS } from "../constants.js";
@@ -13,17 +12,15 @@ import TheErrorMesage from "../components/TheErrorMesage.vue";
 const articlesStore = useArticlesStore();
 const productsStore = useProductsStore();
 
-onMounted(async () => {
-  await articlesStore.getDataByParams({
-    [QUERY_PARAMS.TAG]: [],
-    page: 1,
-    limit: 3,
-  });
-  await productsStore.getDataByParams({
-    [QUERY_PARAMS.TAG]: [],
-    page: 1,
-    limit: 4,
-  });
+articlesStore.getDataByParams({
+  [QUERY_PARAMS.TAG]: [],
+  page: 1,
+  limit: 3,
+});
+productsStore.getDataByParams({
+  [QUERY_PARAMS.TAG]: [],
+  page: 1,
+  limit: 4,
 });
 </script>
 
@@ -36,10 +33,10 @@ onMounted(async () => {
       <section class="products" id="projects">
         <div class="container">
           <div class="products__flex">
-            <the-error-mesage v-show="productsStore.error">{{
+            <the-error-mesage v-if="productsStore.error">{{
               productsStore.error
             }}</the-error-mesage>
-            <div class="products__content" v-show="!productsStore.error">
+            <div class="products__content" v-if="!productsStore.error">
               <h2
                 @click="navigate($router, PAGE_PRODUCTS)"
                 class="products__title"
@@ -66,10 +63,10 @@ onMounted(async () => {
     <section class="articles-and-news">
       <div class="container">
         <div class="articles-and-news__flex">
-          <the-error-mesage v-show="articlesStore.error">{{
+          <the-error-mesage v-if="articlesStore.error">{{
             articlesStore.error
           }}</the-error-mesage>
-          <div class="articles-and-news__content" v-show="!articlesStore.error">
+          <div class="articles-and-news__content" v-if="!articlesStore.error">
             <h2
               @click="navigate($router, PAGE_BLOG)"
               class="articles-and-news__title"

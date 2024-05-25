@@ -23,7 +23,7 @@ export const useProductsStore = defineStore("productsStore", () => {
     try {
       const { data: responseData } = await axios.get(productsUrl, { params });
       data.value = responseData.items;
-      paginationInfo.value = responseData.meta.total_pages;
+      paginationInfo.value = responseData.meta;
       if (paginationInfo.value.remaining_count === 0) {
         allDataLoaded.value = true;
       }
@@ -35,7 +35,6 @@ export const useProductsStore = defineStore("productsStore", () => {
   };
 
   const getUniqueTags = async () => {
-    loader.value = true;
     try {
       const { data: responseData } = await axios.get(
         `${productsUrl}?_select=tag`
@@ -43,8 +42,6 @@ export const useProductsStore = defineStore("productsStore", () => {
       uniqueTags.value = [...new Set(responseData.map((item) => item["tag"]))];
     } catch (err) {
       error.value = err;
-    } finally {
-      loader.value = false;
     }
   };
 

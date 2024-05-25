@@ -6,7 +6,7 @@ import { URL_ARTICLES as articlesUrl, QUERY_PARAMS } from "../constants";
 export const useArticlesStore = defineStore("articlesStore", () => {
   const data = ref([]);
   const paginationInfo = ref({});
-  const lastItem = ref({});
+  const lastItem = ref(null);
   const uniqueTags = ref([]);
   const loader = ref(false);
   const error = ref(null);
@@ -24,7 +24,7 @@ export const useArticlesStore = defineStore("articlesStore", () => {
     try {
       const { data: responseData } = await axios.get(articlesUrl, { params });
       data.value = responseData.items;
-      paginationInfo.value = responseData.meta.total_pages;
+      paginationInfo.value = responseData.meta;
       if (paginationInfo.value.remaining_count === 0) {
         allDataLoaded.value = true;
       }
@@ -35,7 +35,6 @@ export const useArticlesStore = defineStore("articlesStore", () => {
     }
   };
   const getLastItem = async () => {
-    loader.value = true;
     try {
       const { data: responseData } = await axios.get(
         `${articlesUrl}?sortBy=-id&page=1&limit=1`
@@ -43,13 +42,10 @@ export const useArticlesStore = defineStore("articlesStore", () => {
       lastItem.value = responseData.items[0];
     } catch (err) {
       error.value = err;
-    } finally {
-      loader.value = false;
     }
   };
 
   const getUniqueTags = async () => {
-    loader.value = true;
     try {
       const { data: responseData } = await axios.get(
         `${articlesUrl}?_select=tag`
@@ -57,8 +53,6 @@ export const useArticlesStore = defineStore("articlesStore", () => {
       uniqueTags.value = [...new Set(responseData.map((item) => item["tag"]))];
     } catch (err) {
       error.value = err;
-    } finally {
-      loader.value = false;
     }
   };
 

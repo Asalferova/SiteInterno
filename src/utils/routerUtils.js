@@ -12,5 +12,7 @@ export function getQueryParameter(router, parameterName) {
 }
 
 export function updateQuery(router, query) {
-  router.push({ query: { ...router.currentRoute.query, ...query } });
+  const currentRoute = router.currentRoute.value;
+  const newQuery = { ...currentRoute.query, ...query };
+  router.push({ ...currentRoute, query: newQuery });
 }
