@@ -3,7 +3,7 @@ const companiesInfo = [
   { id: 1, count: 12, desc: "Years Of Experiance" },
   { id: 2, count: 85, desc: "Success Project" },
   { id: 3, count: 15, desc: "Active Project" },
-  { id: 4, count: 95, desc: "Happy CUstomers" },
+  { id: 4, count: 95, desc: "Happy Customers" },
 ];
 </script>
 

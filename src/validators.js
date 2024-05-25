@@ -101,21 +101,21 @@ export function isProductsValid(products, fields) {
   return products.every((product) => isProductValid(product, fields));
 }
 
-export const validateContactForm = (name, email, phone, subject, refs) => {
-  if (!name.trim()) {
-    refs.nameRef.value.focus();
+export const validateContactForm = (formValues, formRefs) => {
+  if (!formValues.name.trim()) {
+    formRefs.name.value.focus();
     return false;
   }
-  if (!email.includes("@")) {
-    refs.emailRef.value.focus();
+  if (!formValues.email.includes("@")) {
+    formRefs.email.value.focus();
     return false;
   }
-  if (!phone.match(/^[0-9]+$/)) {
-    refs.phoneRef.value.focus();
+  if (!formValues.phone.match(/^[0-9]+$/)) {
+    formRefs.phone.value.focus();
     return false;
   }
-  if (!subject.trim()) {
-    refs.subjectRef.value.focus();
+  if (!formValues.subject.trim()) {
+    formRefs.subject.value.focus();
     return false;
   }
   return true;

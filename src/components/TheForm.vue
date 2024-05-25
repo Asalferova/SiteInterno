@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, reactive } from "vue";
 import axios from "axios";
 import { URL_POST_CONTACT_FORM } from "../constants";
 import { validateContactForm } from "../validators";
@@ -9,29 +9,25 @@ import { ICON_CLOSE } from "../icons";
 import BaseIcon from "./UI/BaseIcon.vue";
 import BaseText from "./UI/BaseText.vue";
 
+const formValues = reactive({
+  name: "",
+  email: "",
+  phone: "",
+  subject: "",
+  desc: "",
+});
+const name = ref(null);
+const email = ref(null);
+const phone = ref(null);
+const subject = ref(null);
+
 const isOpen = ref(false);
 const isDataSended = ref(false);
 const form = ref(null);
-const nameRef = ref(null);
-const emailRef = ref(null);
-const phoneRef = ref(null);
-const subjectRef = ref(null);
 const message = ref("");
-const name = ref("");
-const email = ref("");
-const phone = ref("");
-const subject = ref("");
-const desc = ref("");
 
 const submitForm = async () => {
-  if (
-    !validateContactForm(name.value, email.value, phone.value, subject.value, {
-      nameRef,
-      emailRef,
-      phoneRef,
-      subjectRef,
-    })
-  ) {
+  if (!validateContactForm(formValues, { name, email, phone, subject })) {
     return;
   }
   const formData = new FormData(form.value);
@@ -39,21 +35,16 @@ const submitForm = async () => {
     const response = await axios.post(URL_POST_CONTACT_FORM, formData);
 
     if (response.status === 200) {
-      message.value = `Thank you, ${name.value}, we will be with you throughout the day :)`;
+      message.value = `Thank you, ${formValues.name}, we will be with you throughout the day :)`;
       isDataSended.value = true;
-    } else {
-      message.value = "An error occurred while submitting the form. ";
     }
   } catch (error) {
     message.value = "An error occurred while submitting the form. ";
   }
-  name.value = "";
-  email.value = "";
-  phone.value = "";
-  subject.value = "";
-  desc.value = "";
+  Object.keys(formValues).forEach((key) => {
+    formValues[key] = "";
+  });
 };
-
 watch(isDataSended, (newVal) => {
   if (newVal) {
     setTimeout(() => {
@@ -70,7 +61,12 @@ watch(isDataSended, (newVal) => {
     >
     <div class="form-container" v-show="isOpen">
       <form class="form" @submit.prevent ref="form" v-if="!isDataSended">
-        <button @click.stop class="close-button" @click="isOpen = !isOpen">
+        <button
+          @click.stop
+          class="close-button"
+          @click="isOpen = !isOpen"
+          aria-label="Close form"
+        >
           <base-icon :name="ICON_CLOSE" class="close-button__svg"></base-icon>
         </button>
         <h1 class="form__heading">
@@ -78,45 +74,50 @@ watch(isDataSended, (newVal) => {
         </h1>
         <div class="form__row">
           <input
-            v-model="name"
-            ref="nameRef"
+            v-model="formValues.name"
+            ref="name"
             type="text"
             name="name"
             placeholder="Name*"
             class="form__input base-input"
+            aria-label="Name"
           />
           <input
             type="email"
-            ref="emailRef"
-            v-model="email"
+            ref="email"
+            v-model="formValues.email"
             name="email"
             placeholder="Email*"
             class="form__input base-input"
+            aria-label="Email"
           />
         </div>
         <div class="form__row">
           <input
-            v-model="phone"
-            ref="phoneRef"
+            v-model="formValues.phone"
+            ref="phone"
             type="tel"
             name="tel"
             placeholder="Phone*"
             class="form__input base-input"
+            aria-label="Phone"
           />
           <input
             type="text"
-            v-model="subject"
-            ref="subjectRef"
+            v-model="formValues.subject"
+            ref="subject"
             name="subject"
             placeholder="Subject*"
             class="form__input base-input"
+            aria-label="Subject"
           />
         </div>
         <textarea
           placeholder="Hello i&rsquo;am interested in.."
-          v-model="desc"
+          v-model="formValues.desc"
           name="desc"
           class="form__textarea base-textarea"
+          aria-label="Decription"
         ></textarea>
         <base-navigation-button class="form__button" @click="submitForm"
           >Submit</base-navigation-button

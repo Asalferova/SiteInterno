@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
 import { useProductsStore } from "../stores/productsStore";
 import { PAGE_PRODUCT_FULL, QUERY_PARAMS } from "../constants.js";
 import { getQueryParameter } from "../utils/routerUtils.js";
@@ -10,19 +11,18 @@ import ProductFull from "../components/ProductFull";
 import RaitingList from "../components/RaitingList";
 import TheErrorMesage from "../components/TheErrorMesage";
 
-const productsStore = useProductsStore();
 const router = useRouter();
+const productsStore = useProductsStore();
+const { error, data } = storeToRefs(productsStore);
 const idValue = ref(null);
 const elementRef = ref(null);
 
-onMounted(async () => {
-  idValue.value = getQueryParameter(router, QUERY_PARAMS.ID);
-  await productsStore.getDataByParams({
-    id: idValue.value,
-    [QUERY_PARAMS.TAG]: [],
-    page: 1,
-    limit: 1,
-  });
+idValue.value = getQueryParameter(router, QUERY_PARAMS.ID);
+productsStore.getDataByParams({
+  id: idValue.value,
+  [QUERY_PARAMS.TAG]: [],
+  page: 1,
+  limit: 1,
 });
 
 scrollToQueryChange(router, elementRef);
@@ -32,21 +32,14 @@ scrollToQueryChange(router, elementRef);
     <the-head-background
       :current-page="PAGE_PRODUCT_FULL"
     ></the-head-background>
-    <the-error-mesage v-show="productsStore.error">
-      {{ productsStore.error }}</the-error-mesage
-    >
-    <div class="container">
-      <the-error-mesage v-show="productsStore.data.length === 0"
-        >Not found :(</the-error-mesage
-      >
+    <the-error-mesage v-if="error"> {{ error }}</the-error-mesage>
+    <div class="container" v-if="!error">
       <div class="main-content" ref="elementRef">
-        <div class="products-flex" v-show="productsStore.data.length">
-          <product-full
-            v-if="productsStore.data.length"
-            :product="productsStore.data[0]"
-          ></product-full>
+        <div class="products-flex" v-if="data.length">
+          <product-full v-if="data.length" :product="data[0]"></product-full>
           <raiting-list :dataId="idValue"></raiting-list>
         </div>
+        <the-error-mesage v-else>Not found :(</the-error-mesage>
       </div>
     </div>
   </div>

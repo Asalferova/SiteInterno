@@ -1,9 +1,8 @@
 <script setup>
-import { ref, defineProps } from "vue";
+import { ref, defineProps, onMounted, defineEmits, computed } from "vue";
 import { useRouter } from "vue-router";
 import { BUTTON_CIRCLE_PAGINATION, QUERY_PARAMS } from "/src/constants.js";
-import { usePagination } from "/src/utils/paginationUtils.js";
-import { getQueryParameter } from "/src/utils/routerUtils.js";
+import { getQueryParameter, updateQuery } from "/src/utils/routerUtils.js";
 import BaseButton from "./UI/BaseButton.vue";
 import { ICON_ARROW_BUTTON_SMALL } from "../icons";
 import BaseIcon from "./UI/BaseIcon.vue";
@@ -16,22 +15,51 @@ const props = defineProps({
 });
 
 const router = useRouter();
-const currentPage = ref(
-  parseInt(getQueryParameter(router, QUERY_PARAMS.PAGE)) || 1
-);
-const totalPages = ref(props.totalPages);
+const MAX_VISIBLE_PAGES = 5;
+const queriedPage = parseInt(getQueryParameter(router, QUERY_PARAMS.PAGE));
 
-const { paginatedButtons, prevPage, nextPage, goToPage } = usePagination(
-  router,
-  currentPage.value,
-  totalPages.value
+const totalPages = ref(props.totalPages);
+const currentPage = ref(
+  (queriedPage <= totalPages.value ? queriedPage : 1) || 1
 );
+const paginatedButtons = computed(() => {
+  if (totalPages.value <= MAX_VISIBLE_PAGES) {
+    return Array.from({ length: totalPages.value }, (_, index) => index + 1);
+  } else {
+    const buttons = [1];
+    if (currentPage.value > 2) buttons.push("...");
+    for (
+      let i = Math.max(2, currentPage.value - 1);
+      i <= Math.min(currentPage.value + 1, totalPages.value - 1);
+      i++
+    ) {
+      buttons.push(i);
+    }
+    if (currentPage.value < totalPages.value - 1) buttons.push("...");
+    buttons.push(totalPages.value);
+    return buttons;
+  }
+});
+
+const emit = defineEmits(["update:currentPage"]);
+
+const goToPage = (page) => {
+  if (page !== "...") {
+    currentPage.value = page;
+    updateQuery(router, { page: currentPage.value });
+  }
+  emit("update:currentPage", page);
+};
+
+onMounted(() => {
+  emit("update:currentPage", currentPage.value);
+});
 </script>
 <template>
   <div class="pagination">
     <base-button
       :type="BUTTON_CIRCLE_PAGINATION"
-      @click="prevPage"
+      @click="goToPage(currentPage - 1)"
       :disabled="currentPage === 1"
       ><base-icon
         :name="ICON_ARROW_BUTTON_SMALL"
@@ -49,7 +77,7 @@ const { paginatedButtons, prevPage, nextPage, goToPage } = usePagination(
     </base-button>
     <base-button
       :type="BUTTON_CIRCLE_PAGINATION"
-      @click="nextPage"
+      @click="goToPage(currentPage + 1)"
       :disabled="currentPage === totalPages"
       ><base-icon :name="ICON_ARROW_BUTTON_SMALL"></base-icon
     ></base-button>

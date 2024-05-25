@@ -1,45 +1,47 @@
 <script setup>
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, reactive } from "vue";
 import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
 import { useArticlesStore } from "../stores/articlesStore";
-import { PAGE_BLOG_DETAILS, QUERY_PARAMS } from "../constants.js";
+import {
+  PAGE_BLOG_DETAILS,
+  QUERY_PARAMS,
+  TAG_LIST_LARGE,
+} from "../constants.js";
 import { getQueryParameter } from "../utils/routerUtils.js";
-import { useInfinitePagination } from "../utils/paginationUtils.js";
 import { scrollToQueryChange } from "../utils/scrollUtils.js";
 import TheHeadBackground from "../components/TheHeadBackground";
 import TheErrorMesage from "../components/TheErrorMesage";
 import ArticleFullList from "../components/ArticleFullList";
-import TagsListLarge from "../components/TagsListLarge";
+import TagList from "../components/TagList";
 
-const articlesStore = useArticlesStore();
 const router = useRouter();
-const selectedTags = ref([]);
-const idValue = ref(null);
-let page = ref(1);
+const articlesStore = useArticlesStore();
+const { error, data, uniqueTags } = storeToRefs(articlesStore);
 const elementRef = ref(null);
-
-const { limit, handleVisibilityChange } = useInfinitePagination(articlesStore);
-
-onMounted(async () => {
-  await articlesStore.getUniqueTags();
+const params = reactive({
+  page: 1,
+  id: getQueryParameter(router, QUERY_PARAMS.ID) || null,
+  [QUERY_PARAMS.TAG]: [],
+  limit: 3,
 });
 
+function updateSelectedTags(value) {
+  params[QUERY_PARAMS.TAG] = value;
+  params.id = null;
+}
+const handleVisibilityChange = (isVisible) => {
+  if (isVisible && !articlesStore.allDataLoaded) {
+    params.limit += 3;
+  }
+};
+
+articlesStore.getUniqueTags();
+
 watch(
-  [
-    () => getQueryParameter(router, QUERY_PARAMS.TAG),
-    () => getQueryParameter(router, QUERY_PARAMS.ID),
-    page,
-    limit,
-  ],
-  async ([tagParam, idParam, currentPage, currentLimit]) => {
-    selectedTags.value = tagParam ? tagParam : [];
-    idValue.value = idParam;
-    await articlesStore.getDataByParams({
-      id: idValue.value,
-      [QUERY_PARAMS.TAG]: selectedTags.value,
-      page: currentPage,
-      limit: currentLimit,
-    });
+  () => params,
+  async () => {
+    await articlesStore.getDataByParams(params);
   },
   { immediate: true, deep: true }
 );
@@ -51,28 +53,25 @@ scrollToQueryChange(router, elementRef);
     <the-head-background
       :current-page="PAGE_BLOG_DETAILS"
     ></the-head-background>
+    <the-error-mesage v-if="error">{{ error }}</the-error-mesage>
     <div class="main-content" ref="elementRef">
       <div class="blog-details">
         <div class="container">
-          <the-error-mesage v-show="articlesStore.error">{{
-            articlesStore.error
-          }}</the-error-mesage>
-          <div class="blog-details__flex" v-show="!articlesStore.error">
-            <the-error-mesage v-show="articlesStore.data.length === 0"
-              >Not found :(</the-error-mesage
-            >
+          <div class="blog-details__flex" v-if="!error && data.length">
             <article-full-list
-              v-if="articlesStore.data.length"
-              :articles="articlesStore.data"
+              v-if="data.length"
+              :articles="data"
             ></article-full-list>
-            <tags-list-large
-              v-if="articlesStore.uniqueTags.length"
-              :tags="articlesStore.uniqueTags"
-              :selectedTags="selectedTags"
-            ></tags-list-large>
+            <tag-list
+              v-if="uniqueTags.length"
+              :type="TAG_LIST_LARGE"
+              :tags="uniqueTags"
+              @select="updateSelectedTags"
+            ></tag-list>
           </div>
+          <the-error-mesage v-else> Not found :( </the-error-mesage>
           <div
-            v-show="articlesStore.data.length"
+            v-show="data.length > 2"
             v-observe-visibility="handleVisibilityChange"
           ></div>
         </div>
