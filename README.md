@@ -29,6 +29,7 @@
 
 
 <h2 id="setup">Настройка проекта</h2>
+
 ### Установка
 ```
 npm install
@@ -50,7 +51,7 @@ npm run lint
 ```
 
 ### Настройка конфигурации
-See [Справочник по конфигурации](https://cli.vuejs.org/config/).
+[Справочник по конфигурации](https://cli.vuejs.org/config/).
 
 
 <h2 id="stack">Технологии</h2>
